@@ -26,7 +26,7 @@ CREATE TABLE Ticket(
 	IdCliente			BIGINT					FOREIGN KEY REFERENCES Cliente(Id),
 	IdSituacao			SMALLINT	NOT NULL	FOREIGN KEY REFERENCES TicketSituacao(ID),
 	Codigo				INT			NOT NULL,				
-	DataAbertura		DATETIME	NOT NULL	DEFAULT GETDATE(),
+	DataAbertura		DATETIME	DEFAULT GETDATE(),
 	DataConclusao		DATETIME,
 )
 
@@ -38,3 +38,4 @@ CREATE TABLE TicketAnotacao(
 	[Data]		DATETIME		NOT NULL	DEFAULT GETDATE()
 )
 
+INSERT INTO TICKET (ID,IdUsuarioAbertura, IdSituacao, Codigo) VALUES ()
