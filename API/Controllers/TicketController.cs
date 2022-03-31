@@ -6,27 +6,31 @@ using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     public class TicketController : ControllerBase
     {
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly ITicketRepository _ticketRepository;
+        private readonly ITicketAnotacaoRepository _ticketAnotacaoRepository;
 
         public TicketController(
             ILogger<WeatherForecastController> logger, 
-            ITicketRepository ticketRepository)
+            ITicketRepository ticketRepository,
+            ITicketAnotacaoRepository ticketAnotacaoRepository)
         {
             _logger = logger;
             _ticketRepository = ticketRepository;
+            _ticketAnotacaoRepository = ticketAnotacaoRepository;
         }
 
         [HttpPost]
+        [Route("/criar")]
         public IActionResult Criar([FromBody] Ticket ticket)
         {
             try
             {
-                return Created($"Criado com o id {ticket.Id}", _ticketRepository.Create(ticket));
+                
+                return Ok($"{_ticketRepository.Create(ticket)}");
             }
             catch (System.Exception)
             {
@@ -34,5 +38,49 @@ namespace API.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("/anotar")]
+        public IActionResult Anotar([FromBody]TicketAnotacao anotacao)
+        {
+            try
+            {
+                _ticketAnotacaoRepository.Create(anotacao);
+                return NoContent();
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("/concluir")]
+        public IActionResult Concluir([FromQuery]int id)
+        {
+            try
+            {
+                var ticket = _ticketRepository.Concluir(id);
+                return Ok($"O Ticket {id} foi concluído com sucesso.");
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        [Route("/visualizar")]
+        public IActionResult Visualizar([FromQuery]int id)
+        {
+            try
+            {
+
+                return Ok();
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
     }
 }

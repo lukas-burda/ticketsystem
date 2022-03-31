@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using Application;
+using Dapper;
 using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.Data.SqlClient;
@@ -15,33 +16,50 @@ namespace Infraestructure
     {
         private readonly string _connectionString;
         private readonly ITicketSituacaoRepository _ticketSituacaoRepository;
-
         public TicketRepository(IConfiguration configuration, ITicketSituacaoRepository ticketSituacaoRepository)
         {
             _connectionString = configuration.GetConnectionString("HavanLabs");
             _ticketSituacaoRepository = ticketSituacaoRepository;
-        }
-        public Ticket Create(Ticket ticket)
-        {
-            var situacao = _ticketSituacaoRepository.Create(new TicketSituacao { Id = new Random().Next(32767), Nome = "Aberto" });
 
-            var ticketQuery = new Ticket
-            {
-                Id = new Random().Next(),
-                IdTicketSituacao = situacao.Id,
-                Codigo = new Random().Next(),
-                DataAbertura = DateTime.Now
-            };
+        }
+
+        public int Concluir(int id)
+        {
+            var rules = new Rules();
+            Ticket ticket = rules.FillFieldsToConclude(GetByCode(id), _ticketSituacaoRepository);
 
             using var connection = new SqlConnection(_connectionString);
 
             connection.Open();
-            var sqlQuery = $"INSERT INTO Ticket (Id,IdUsuarioAbertura,IdCliente,IdSituacao,Codigo,DataAbertura) " +
-                $"VALUES ({ticketQuery.Id},{ticketQuery.IdUsuarioAbertura},{ticketQuery.IdCliente},{situacao.Id},{ticketQuery.Codigo},'{ticketQuery.DataAbertura}')";
-
-            int rowsAffected = connection.Execute(sqlQuery, ticketQuery);
+            var sqlQuery = $"UPDATE Ticket SET IdUsuarioConclusao = {ticket.IdUsuarioConclusao}, DataConclusao = '{ticket.DataConclusao}' WHERE ID = '{ticket.Id}'";
+            int rowsAffected = connection.Execute(sqlQuery, sqlQuery);
             connection.Close();
-            return ticket;
+            return rowsAffected;
+        }
+
+        public string Create(Ticket ticket)
+        {
+            var rules = new Rules();
+            var ticketQuery = rules.FillFieldsToCreate(ticket, _ticketSituacaoRepository, GetAll());
+
+            if(ticketQuery != null) {
+                using var connection = new SqlConnection(_connectionString);
+
+                connection.Open();
+                var sqlQuery = $"INSERT INTO Ticket (Id,IdUsuarioAbertura,IdCliente,IdSituacao,DataAbertura) " +
+                    $"VALUES ({ticketQuery.Id},{ticketQuery.IdUsuarioAbertura},{ticketQuery.IdCliente},{ticketQuery.IdSituacao},'{ticketQuery.DataAbertura}')";
+
+                int rowsAffected = connection.Execute(sqlQuery, ticketQuery);
+                connection.Close();
+
+                Ticket ticketCode = GetById(ticketQuery.Id);
+
+                return $"Ticket {ticketCode.Codigo} criado com sucesso";
+             }
+            else
+            {
+                return "Não foi possível criar o ticket pois este cliente já possui um ticket em andamento";
+            }
         }
 
         public Ticket Delete(Ticket ticket)
@@ -49,9 +67,33 @@ namespace Infraestructure
             throw new NotImplementedException();
         }
 
-        public Ticket Get(int id)
+        public Ticket GetById(int Id)
         {
-            throw new NotImplementedException();
+            using var connection = new SqlConnection(_connectionString);
+
+            connection.Open();
+            Ticket ticket = connection.Query<Ticket>($"SELECT * FROM Ticket WHERE ID = {Id}").FirstOrDefault();
+            connection.Close();
+
+            return ticket;
+        }
+
+        public Ticket GetByCode(int Id)
+        {
+            using var connection = new SqlConnection(_connectionString);
+
+            connection.Open();
+            Ticket ticket = connection.Query<Ticket>($"SELECT * FROM Ticket WHERE Codigo = {Id}").FirstOrDefault();
+            connection.Close();
+
+            return ticket;
+        }
+
+        public List<Ticket> GetAll()
+        {
+            using var connection = new SqlConnection(_connectionString);
+
+            return connection.Query<Ticket>("SELECT * FROM Ticket").ToList();
         }
 
         public Ticket Update(Ticket ticket)

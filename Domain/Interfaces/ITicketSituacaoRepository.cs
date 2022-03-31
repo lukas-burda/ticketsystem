@@ -10,7 +10,7 @@ namespace Domain.Interfaces
     public interface ITicketSituacaoRepository
     {
         TicketSituacao Create(TicketSituacao ticket);
-        TicketSituacao Update();
+        TicketSituacao Update(TicketSituacao ticket);
         TicketSituacao Delete();
         TicketSituacao GetById(int Id);
     }

@@ -40,12 +40,26 @@ namespace Infraestructure
 
         public TicketSituacao GetById(int Id)
         {
-            throw new NotImplementedException();
+            using var connection = new SqlConnection(_connectionString);
+            
+            connection.Open();
+            TicketSituacao situacao = connection.Query<TicketSituacao>($"SELECT * FROM TicketSituacao WHERE ID = {Id}").FirstOrDefault();
+            connection.Close();
+
+            return situacao;
         }
 
-        public TicketSituacao Update()
+        public TicketSituacao Update(TicketSituacao situacao)
         {
-            throw new NotImplementedException();
+            using var connection = new SqlConnection(_connectionString);
+
+            connection.Open();
+            var sqlQuery = $"UPDATE TicketSituacao SET Nome = '{situacao.Nome}' WHERE ID = {situacao.Id}";
+
+            int rowsAffected = connection.Execute(sqlQuery, situacao);
+            connection.Close();
+
+            return situacao;
         }
     }
 }

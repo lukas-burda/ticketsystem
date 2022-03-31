@@ -9,9 +9,12 @@ namespace Domain.Interfaces
 {
     public interface ITicketRepository
     {
-        Ticket Create(Ticket ticket);
+        string Create(Ticket ticket);
         Ticket Update(Ticket ticket);
         Ticket Delete(Ticket ticket);
-        Ticket Get(int id);
+        Ticket GetById(int id);
+        Ticket GetByCode(int id);
+        List<Ticket> GetAll();
+        int Concluir (int id);
     }
 }

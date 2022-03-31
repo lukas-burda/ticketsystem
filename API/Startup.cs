@@ -1,5 +1,6 @@
 using Domain.Interfaces;
 using Infraestructure;
+using Infraestructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,7 @@ namespace API
         {
             services.AddScoped<ITicketRepository, TicketRepository>();
             services.AddScoped<ITicketSituacaoRepository, TicketSituacaoRepository>();
+            services.AddScoped<ITicketAnotacaoRepository, TicketAnotacaoRepository>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
