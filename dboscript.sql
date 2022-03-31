@@ -47,3 +47,22 @@ CREATE TABLE TicketAnotacao(
 	Texto		VARCHAR(512)	DEFAULT	'Sem anotações para este Ticket.',
 	[Data]		DATETIME		NOT NULL	DEFAULT GETDATE()
 )
+
+
+GO
+CREATE VIEW Tabela_informacoes
+AS
+SELECT 
+	Ticket.*, 
+	Cliente.Codigo AS 'Código_Cliente', CLiente.CPF as 'Cliente.CPF', 
+	TS.Nome as 'Situacao',
+	ab.Codigo as 'Codigo_Usuario_Abertura', ab.Nome as 'Nome_Usuario_Abertura',
+	ac.Codigo as 'Codigo_Usuario_Conclusao', ac.Nome as 'Nome_Usuario_Conclusao',
+	(SELECT COUNT(*) FROM TicketAnotacao WHERE TicketAnotacao.IdTicket = Ticket.ID) as 'Quantidade_Anotacoes'
+FROM
+	Ticket 
+	INNER JOIN Cliente ON Cliente.ID = Ticket.IdCliente
+	INNER JOIN Usuario ab ON ab.ID = Ticket.IdUsuarioAbertura
+	LEFT JOIN Usuario ac ON ac.ID = Ticket.IdUsuarioConclusao
+	INNER JOIN TicketSituacao TS ON TS.ID = Ticket.IdSituacao
+	LEFT JOIN TicketAnotacao TA ON TA.IdTicket = Ticket.ID or TA.IdUsuario = ab.ID or ac.ID = TA.IdUsuario
