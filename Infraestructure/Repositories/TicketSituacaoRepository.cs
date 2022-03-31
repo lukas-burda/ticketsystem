@@ -3,11 +3,7 @@ using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infraestructure
 {
@@ -33,10 +29,6 @@ namespace Infraestructure
             return situacao;
         }
 
-        public TicketSituacao Delete()
-        {
-            throw new NotImplementedException();
-        }
 
         public TicketSituacao GetById(int Id)
         {

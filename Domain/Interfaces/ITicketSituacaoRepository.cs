@@ -11,7 +11,6 @@ namespace Domain.Interfaces
     {
         TicketSituacao Create(TicketSituacao ticket);
         TicketSituacao Update(TicketSituacao ticket);
-        TicketSituacao Delete();
         TicketSituacao GetById(int Id);
     }
 }

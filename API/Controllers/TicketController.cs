@@ -1,30 +1,24 @@
 ﻿using Domain.Interfaces;
 using Domain.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
     [ApiController]
     public class TicketController : ControllerBase
     {
-        private readonly ILogger<WeatherForecastController> _logger;
         private readonly ITicketRepository _ticketRepository;
         private readonly ITicketAnotacaoRepository _ticketAnotacaoRepository;
 
         public TicketController(
-            ILogger<WeatherForecastController> logger, 
             ITicketRepository ticketRepository,
             ITicketAnotacaoRepository ticketAnotacaoRepository)
         {
-            _logger = logger;
             _ticketRepository = ticketRepository;
             _ticketAnotacaoRepository = ticketAnotacaoRepository;
         }
 
-        [HttpPost]
-        [Route("/criar")]
+        [HttpPost("/criar")]
         public IActionResult Criar([FromBody] Ticket ticket)
         {
             try
@@ -38,8 +32,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("/anotar")]
+        [HttpPost("/anotar")]
         public IActionResult Anotar([FromBody]TicketAnotacao anotacao)
         {
             try
@@ -53,14 +46,13 @@ namespace API.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("/concluir")]
-        public IActionResult Concluir([FromQuery]int id)
+        [HttpPost("/concluir")]
+        public IActionResult Concluir([FromQuery]int codigoTicket)
         {
             try
             {
-                var ticket = _ticketRepository.Concluir(id);
-                return Ok($"O Ticket {id} foi concluído com sucesso.");
+                var ticket = _ticketRepository.Concluir(codigoTicket);
+                return Ok($"O Ticket {codigoTicket} foi concluído com sucesso.");
             }
             catch (System.Exception)
             {
@@ -68,8 +60,7 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("/visualizar")]
+        [HttpGet("/visualizar")]
         public IActionResult Visualizar([FromQuery]int id)
         {
             try

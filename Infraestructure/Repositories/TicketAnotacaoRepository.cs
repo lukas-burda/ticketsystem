@@ -35,20 +35,5 @@ namespace Infraestructure.Repositories
             connection.Close();;
             return anotacao;
         }
-
-        public TicketAnotacao Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public TicketAnotacao GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public TicketAnotacao Update(TicketAnotacao ticketAnotacao)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

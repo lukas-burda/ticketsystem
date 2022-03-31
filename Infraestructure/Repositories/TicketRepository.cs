@@ -4,11 +4,8 @@ using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infraestructure
 {
@@ -62,11 +59,6 @@ namespace Infraestructure
             }
         }
 
-        public Ticket Delete(Ticket ticket)
-        {
-            throw new NotImplementedException();
-        }
-
         public Ticket GetById(int Id)
         {
             using var connection = new SqlConnection(_connectionString);
@@ -96,9 +88,5 @@ namespace Infraestructure
             return connection.Query<Ticket>("SELECT * FROM Ticket").ToList();
         }
 
-        public Ticket Update(Ticket ticket)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -10,8 +10,5 @@ namespace Domain.Interfaces
     public interface ITicketAnotacaoRepository
     {
         TicketAnotacao Create(TicketAnotacao anotacao);
-        TicketAnotacao Update(TicketAnotacao ticketAnotacao);
-        TicketAnotacao Delete(int id);
-        TicketAnotacao GetById(int id);
     }
 }
